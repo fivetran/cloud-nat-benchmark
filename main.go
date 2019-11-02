@@ -56,5 +56,6 @@ func main() {
 			failure = 0
 			logged = time.Now()
 		}
+		client.CloseIdleConnections()
 	}
 }
