@@ -10,47 +10,12 @@ import (
 	"time"
 )
 
-const runTime = 2 * time.Second
-
-type counts struct {
-	success, failure int
-}
-
-var tryThreads = []int{
-	1,
-	10,
-	25,
-	50,
-	100,
-	200,
-	300,
-	400,
-	500,
-}
-
 func main() {
-	fmt.Fprintf(os.Stdout, "threads,success/s,fail/s\n")
-	for _, threads := range tryThreads {
-		reply := make(chan counts, threads)
-		for i := 0; i < threads; i++ {
-			go createRequests(reply)
-		}
-		var total counts
-		for n := 0; n < threads; n++ {
-			partial := <-reply
-			total.success += partial.success
-			total.failure += partial.failure
-		}
-		successRate := int(float64(total.success) / runTime.Seconds())
-		failureRate := int(float64(total.failure) / runTime.Seconds())
-		fmt.Fprintf(os.Stdout, "%d,%d,%d\n", threads, successRate, failureRate)
-	}
-}
-
-func createRequests(reply chan counts) {
-	var result counts
+	fmt.Fprintf(os.Stdout, "success/s\tfail/s\n")
+	var success, failure int
 	start := time.Now()
-	for time.Since(start) < runTime {
+	logged := start
+	for time.Since(start) < 10*time.Second {
 		client := &http.Client{
 			Transport: &http.Transport{
 				MaxIdleConns: 1,
@@ -59,29 +24,37 @@ func createRequests(reply chan counts) {
 		resp, err := client.Get("https://example.com/")
 		if err != nil {
 			log.Print(err)
-			result.failure++
+			failure++
 			continue
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Print(err)
-			result.failure++
+			failure++
 			continue
 		}
 		hash := fnv.New32a()
 		_, err = hash.Write(body)
 		if err != nil {
 			log.Print(err)
-			result.failure++
+			failure++
 			continue
 		}
 		if hash.Sum32() != 3712873988 {
 			log.Print(hash.Sum32())
-			result.failure++
+			failure++
 			continue
 		}
-		result.success++
+		success++
+		if time.Since(logged) > time.Second {
+			runTime := time.Since(logged)
+			successRate := int(float64(success) / runTime.Seconds())
+			failureRate := int(float64(failure) / runTime.Seconds())
+			fmt.Fprintf(os.Stdout, "%d\t%d\n", successRate, failureRate)
+			success = 0
+			failure = 0
+			logged = time.Now()
+		}
 	}
-	reply <- result
 }
