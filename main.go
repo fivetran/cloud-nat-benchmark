@@ -15,12 +15,12 @@ func main() {
 	var success, failure int
 	start := time.Now()
 	logged := start
+	client := &http.Client{
+		Transport: &http.Transport{
+			MaxIdleConns: 1,
+		},
+	}
 	for time.Since(start) < 10*time.Second {
-		client := &http.Client{
-			Transport: &http.Transport{
-				MaxIdleConns: 1,
-			},
-		}
 		resp, err := client.Get("https://example.com/")
 		if err != nil {
 			log.Print(err)
@@ -56,6 +56,5 @@ func main() {
 			failure = 0
 			logged = time.Now()
 		}
-		client.CloseIdleConnections()
 	}
 }
