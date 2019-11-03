@@ -1,0 +1,7 @@
+gcloud compute instances create nat-test-1 \
+    --image=ubuntu-1910-eoan-v20191022 \
+    --image-project=ubuntu-os-cloud \
+    --network custom-network1 \
+    --subnet subnet-us-central-192 \
+    --zone us-central1-c \
+    --no-address
