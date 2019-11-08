@@ -16,8 +16,7 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     artifacts = [
-        "org.glassfish.jersey.core:jersey-client:2.28",
-        "org.glassfish.jersey.inject:jersey-hk2:2.28",
+        "org.glassfish.jersey.core:jersey-client:2.25.1",
     ],
     repositories = [
         "https://jcenter.bintray.com/",
