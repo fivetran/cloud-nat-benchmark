@@ -12,7 +12,7 @@ public class Main {
         Instant start = Instant.now(), logged = Instant.now();
         Client client = ClientBuilder.newClient();
         while (Duration.between(start, Instant.now()).toMillis() < 10_000) {
-            WebTarget target = client.target("http://example.com");
+            WebTarget target = client.target("https://example.com");
             String resp = target.request().get(String.class);
             if (resp.hashCode() != -801093019) {
                 System.err.println(resp.hashCode());

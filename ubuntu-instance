@@ -7,3 +7,10 @@ gcloud compute instances create nat-test-1 \
     --subnet subnet-us-central-192 \
     --zone us-central1-c \
     --no-address
+
+# Run this in the instance
+sudp apt-get update
+sudo apt-get install pkg-config zip g++ zlib1g-dev unzip python3
+wget https://github.com/bazelbuild/bazel/releases/download/1.0.1/bazel-1.0.1-installer-linux-x86_64.sh
+chmod +x bazel-1.0.1-installer-linux-x86_64.sh
+sudo ./bazel-1.0.1-installer-linux-x86_64.sh
