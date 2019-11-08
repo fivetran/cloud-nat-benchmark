@@ -7,7 +7,7 @@ import javax.ws.rs.client.WebTarget;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("success/s\tfail/s\t");
+        System.out.println("success/s\tfail/s");
         int success = 0, failure = 0;
         Instant start = Instant.now(), logged = Instant.now();
         Client client = ClientBuilder.newClient();
