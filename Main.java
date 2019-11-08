@@ -24,7 +24,7 @@ public class Main {
                 Duration runTime = Duration.between(logged, Instant.now());
                 double successRate = success * 1000.0 / runTime.toMillis();
                 double failureRate = failure * 1000.0 / runTime.toMillis();
-                System.out.println(String.format("%d\t%d\n", (int) successRate, (int) failureRate));
+                System.out.println(String.format("%d\t%d", (int) successRate, (int) failureRate));
                 success = 0;
                 failure = 0;
                 logged = Instant.now();
