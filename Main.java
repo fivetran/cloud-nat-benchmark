@@ -1,9 +1,11 @@
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,13 +14,12 @@ public class Main {
         Instant start = Instant.now(), logged = Instant.now();
         Client client = ClientBuilder.newClient();
         while (Duration.between(start, Instant.now()).toMillis() < 10_000) {
-            WebTarget target = client.target("https://example.com");
-            String resp = target.request().get(String.class);
-            if (resp.hashCode() != -801093019) {
-                System.err.println(resp.hashCode());
-                failure++;
-            } else {
+            WebTarget target = client.target("https://george-json-test.s3.amazonaws.com/example.json");
+            List<FooBar> resp = target.request().get(new GenericType<List<FooBar>>() {});
+            if (ok(resp)) {
                 success++;
+            } else {
+                failure++;
             }
             if (Duration.between(logged, Instant.now()).toMillis() > 1_000) {
                 Duration runTime = Duration.between(logged, Instant.now());
@@ -30,5 +31,18 @@ public class Main {
                 logged = Instant.now();
             }
         }
+    }
+
+    private static boolean ok(List<FooBar> resp) {
+        for (FooBar row : resp) {
+            if (row.foo != 1 || row.bar != 2) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static class FooBar {
+        public int foo, bar;
     }
 }
