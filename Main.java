@@ -5,7 +5,6 @@ import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,10 +12,10 @@ public class Main {
         int success = 0, failure = 0;
         Instant start = Instant.now(), logged = Instant.now();
         Client client = ClientBuilder.newClient();
-        while (Duration.between(start, Instant.now()).toMillis() < 10_000) {
+        while (Duration.between(start, Instant.now()).toMillis() < 15_000) {
             WebTarget target = client.target("https://george-json-test.s3.amazonaws.com/example.json");
-            List<FooBar> resp = target.request().get(new GenericType<List<FooBar>>() {});
-            if (ok(resp)) {
+            FooBarList resp = target.request().get(FooBarList.class);
+            if (ok(resp.list)) {
                 success++;
             } else {
                 failure++;
@@ -40,6 +39,10 @@ public class Main {
             }
         }
         return true;
+    }
+
+    static class FooBarList {
+        public List<FooBar> list;
     }
 
     static class FooBar {
